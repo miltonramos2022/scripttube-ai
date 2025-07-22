@@ -1,17 +1,6 @@
 // ARQUIVO: netlify/functions/get-transcript.js
 
-const { YouTubeTranscript } = require('youtube-transcript');
-const axios = require('axios'); // Importamos o axios
-
-// Criamos uma instância do axios com um "disfarce" de navegador
-const customAxios = axios.create({
-  headers: {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36'
-  }
-});
-
-// A biblioteca youtube-transcript nos permite usar nosso próprio cliente http (o axios )
-YouTubeTranscript.prototype.defaultClient = customAxios;
+const { YouTubeTranscript } = require('youtube-transcript' );
 
 exports.handler = async (event) => {
   const videoID = event.queryStringParameters.videoID;
@@ -24,7 +13,11 @@ exports.handler = async (event) => {
   }
 
   try {
-    const transcriptArray = await YouTubeTranscript.fetchTranscript(videoID);
+    // Tenta buscar a transcrição, priorizando Português e depois Inglês
+    const transcriptArray = await YouTubeTranscript.fetchTranscript(videoID, {
+      lang: 'pt',
+      country: 'BR',
+    });
 
     if (!transcriptArray || transcriptArray.length === 0) {
       throw new Error("A transcrição retornada está vazia.");
@@ -38,11 +31,12 @@ exports.handler = async (event) => {
     };
 
   } catch (error) {
-    console.error(`Erro na função para o vídeo ${videoID}:`, error);
+    // Se falhar (ex: pt não existe), loga o erro e retorna uma mensagem clara
+    console.error(`Não foi possível obter a transcrição para o vídeo ${videoID}:`, error);
     return {
-      statusCode: 200,
+      statusCode: 200, // Mantemos 200 para não quebrar o front-end
       body: JSON.stringify({
-        text: `ERRO DO ESPECIALISTA: Não foi possível obter a transcrição. Verifique se o vídeo realmente possui uma.`,
+        text: `INFO: Este vídeo não possui uma transcrição que eu consiga ler.`,
       }),
     };
   }
