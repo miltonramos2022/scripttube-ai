@@ -1,16 +1,19 @@
 {
-  "name": "nova-pasta",
+  "name": "scripttube-final",
   "version": "1.0.0",
+  "description": "Um aplicativo para buscar transcrições de vídeos do YouTube.",
   "main": "script.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "youtube",
+    "transcript"
+  ],
+  "author": "Milton",
   "license": "ISC",
-  "description": "",
   "dependencies": {
-    "axios": "^1.10.0",
-    "youtube-transcript": "^1.2.1"
+    "axios": "^1.7.2",
+    "youtubei.js": "^7.0.0"
   }
 }
