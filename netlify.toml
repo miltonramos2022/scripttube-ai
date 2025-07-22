@@ -1,0 +1,6 @@
+[build]
+  # Onde estão as suas funções de back-end
+  functions = "netlify/functions/"
+  
+  # Onde estão os arquivos do seu site (HTML, CSS, JS)
+  publish = "public/"

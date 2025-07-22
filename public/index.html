@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScriptTube.AI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>ScriptTube.AI</h1>
+            <p>Transforme vídeos do YouTube em texto automaticamente. Cole a URL, defina quantos vídeos deseja transcrever e pronto!</p>
+            <p class="desenvolvido-por">Desenvolvido por MRMarketing&designer com a ajuda do Gemini</p>
+        </header>
+
+        <main>
+            <div class="input-section">
+                <h2>Cole a URL de qualquer vídeo do canal</h2>
+                <p class="subtitle">(É o canal que você quer extrair as transcrições)</p>
+                
+                <input type="text" id="url-input" placeholder="http://googleusercontent.com/youtube.com/watch?v=...">
+                <input type="number" id="video-count-input" value="5" min="1">
+                
+                <select id="order-select">
+                    <option value="viewCount">Mais Populares (Em Alta)</option>
+                    <option value="date">Mais Recentes</option>
+                </select>
+                
+                <button id="generate-button">Gerar Transcrições</button>
+            </div>
+
+            <div class="results-section">
+                <button id="download-all-button">Baixar Todas as Transcrições</button>
+                
+                <div id="results-container">
+                    </div>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <p>© 2025 ScriptTube.AI - Todos os direitos reservados</p>
+        <p>Criado por MRMarketing&designer</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
