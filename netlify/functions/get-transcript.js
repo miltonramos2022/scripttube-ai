@@ -1,6 +1,6 @@
 // ARQUIVO: netlify/functions/get-transcript.js
 
-const { YouTubeTranscript } = require('youtube-transcript' );
+const { YouTubeTranscript } = require('youtube-transcript');
 
 exports.handler = async (event) => {
   const videoID = event.queryStringParameters.videoID;
@@ -13,16 +13,17 @@ exports.handler = async (event) => {
   }
 
   try {
-    // Tenta buscar a transcrição, priorizando Português e depois Inglês
-    const transcriptArray = await YouTubeTranscript.fetchTranscript(videoID, {
-      lang: 'pt',
-      country: 'BR',
-    });
+    // Tenta buscar a transcrição sem especificar o idioma.
+    // Isso força a biblioteca a procurar por qualquer transcrição disponível,
+    // incluindo as geradas automaticamente.
+    const transcriptArray = await YouTubeTranscript.fetchTranscript(videoID);
 
+    // Se não encontrar nada, lança um erro.
     if (!transcriptArray || transcriptArray.length === 0) {
-      throw new Error("A transcrição retornada está vazia.");
+      throw new Error("A biblioteca não retornou nenhuma transcrição.");
     }
 
+    // Junta o texto em um único parágrafo.
     const fullText = transcriptArray.map(item => item.text).join(' ');
 
     return {
@@ -31,12 +32,12 @@ exports.handler = async (event) => {
     };
 
   } catch (error) {
-    // Se falhar (ex: pt não existe), loga o erro e retorna uma mensagem clara
-    console.error(`Não foi possível obter a transcrição para o vídeo ${videoID}:`, error);
+    // Se, mesmo assim, falhar, retorna uma mensagem de erro clara.
+    console.error(`ERRO FINAL na busca da transcrição para ${videoID}:`, error);
     return {
-      statusCode: 200, // Mantemos 200 para não quebrar o front-end
+      statusCode: 200,
       body: JSON.stringify({
-        text: `INFO: Este vídeo não possui uma transcrição que eu consiga ler.`,
+        text: `FALHA: Mesmo sabendo que a transcrição existe, a biblioteca não conseguiu extraí-la.`,
       }),
     };
   }
