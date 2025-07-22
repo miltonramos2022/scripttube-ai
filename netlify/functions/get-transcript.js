@@ -1,6 +1,7 @@
 // ARQUIVO: netlify/functions/get-transcript.js
 
-const { YouTubeTranscript } = require('youtube-transcript');
+// Importando a nova e mais poderosa biblioteca
+const { Innertube } = require('youtubei.js');
 
 exports.handler = async (event) => {
   const videoID = event.queryStringParameters.videoID;
@@ -13,18 +14,19 @@ exports.handler = async (event) => {
   }
 
   try {
-    // Tenta buscar a transcrição sem especificar o idioma.
-    // Isso força a biblioteca a procurar por qualquer transcrição disponível,
-    // incluindo as geradas automaticamente.
-    const transcriptArray = await YouTubeTranscript.fetchTranscript(videoID);
+    // Inicia a nova biblioteca
+    const youtube = await Innertube.create();
 
-    // Se não encontrar nada, lança um erro.
-    if (!transcriptArray || transcriptArray.length === 0) {
-      throw new Error("A biblioteca não retornou nenhuma transcrição.");
+    // Pede a transcrição para o YouTube
+    const transcript = await youtube.getTranscript(videoID);
+
+    // Se não encontrar, lança um erro
+    if (!transcript || !transcript.content || transcript.content.length === 0) {
+      throw new Error("A biblioteca youtubei.js não retornou uma transcrição.");
     }
 
-    // Junta o texto em um único parágrafo.
-    const fullText = transcriptArray.map(item => item.text).join(' ');
+    // Formata o texto
+    const fullText = transcript.content.map(item => item.text).join(' ');
 
     return {
       statusCode: 200,
@@ -32,12 +34,11 @@ exports.handler = async (event) => {
     };
 
   } catch (error) {
-    // Se, mesmo assim, falhar, retorna uma mensagem de erro clara.
-    console.error(`ERRO FINAL na busca da transcrição para ${videoID}:`, error);
+    console.error(`ERRO com a biblioteca youtubei.js para o vídeo ${videoID}:`, error);
     return {
       statusCode: 200,
       body: JSON.stringify({
-        text: `FALHA: Mesmo sabendo que a transcrição existe, a biblioteca não conseguiu extraí-la.`,
+        text: `FALHA FINAL: A biblioteca alternativa (youtubei.js) também não conseguiu extrair a transcrição. O vídeo pode ter alguma proteção.`,
       }),
     };
   }
